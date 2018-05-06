@@ -4,7 +4,7 @@ import numpy
 from PIL import Image
 import os
 
-list = os.listdir("./resize_image/")
+list = os.listdir("data/resize_image/")
 print(list)
 print(len(list))
 for batch_id in range(1, 10):
@@ -12,10 +12,9 @@ for batch_id in range(1, 10):
 	batch_xs=[]
 	batch_ys=[]
 	for image in batch:
-		id_tag = image.find("-")
-		score = image[0:id_tag]
+		score = image.split("-")[1].split(".")[0]
 		# print(score)
-		img = Image.open("./resize_image/" + image)
+		img = Image.open("data/resize_image/" + image)
 		img_ndarray = numpy.asarray(img, dtype='float32')
 		img_ndarray = numpy.reshape(img_ndarray, [128, 128, 3])
 		# print(img_ndarray.shape)

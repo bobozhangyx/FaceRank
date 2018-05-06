@@ -118,22 +118,21 @@ with tf.Session() as sess:
     sess.run(init)
     step = 1
     # Keep training until reach max iterations
-    list = os.listdir("./resize_image/")
+    list = os.listdir("data/resize_image/")
     print(list)
     print(len(list))
     count=0
     while count<10:
         count = count+1
         print("count:",count)
-        for batch_id in range(0, 12):
+        for batch_id in range(0, 50):
             batch = list[batch_id * 10:batch_id * 10 + 10]
             batch_xs = []
             batch_ys = []
             for image in batch:
-                id_tag = image.find("-")
-                score = image[0:id_tag]
+                score = image.split("-")[1].split(".")[0]
                 # print(score)
-                img = Image.open("./resize_image/" + image)
+                img = Image.open("data/resize_image/" + image)
                 img_ndarray = numpy.asarray(img, dtype='float32')
                 img_ndarray = numpy.reshape(img_ndarray, [128, 128, 3])
                 # print(img_ndarray.shape)
@@ -163,6 +162,6 @@ with tf.Session() as sess:
                       "{:.6f}".format(loss) + ", Training Accuracy= " + \
                       "{:.5f}".format(acc))
             step += 1
+        saver.save(sess, "./model/model.ckpt")
     print("Optimization Finished!")
-    saver.save(sess,"./model/model.ckpt")
 

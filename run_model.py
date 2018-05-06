@@ -117,31 +117,27 @@ with tf.Session() as sess:
     saver.restore(sess, "./model/model.ckpt")
     step = 1
     # Keep training until reach max iterations
-    list = os.listdir("./test_resize/")
-    print(list)
-    print(len(list))
+    list = os.listdir("data/test/")
 
-    for batch_id in range(0, 2):
-        batch = list[batch_id * 10:batch_id * 10 + 10]
+    for image in list:
         batch_xs = []
         batch_ys = []
-        for image in batch:
-            id_tag = image.find("-")
-            score = image[0:id_tag]
-            # print(score)
-            img = Image.open("./test_resize/" + image)
-            img_ndarray = numpy.asarray(img, dtype='float32')
-            img_ndarray = numpy.reshape(img_ndarray, [128, 128, 3])
-            # print(img_ndarray.shape)
-            batch_x = img_ndarray
-            batch_xs.append(batch_x)
+        img = Image.open("data/test/" + image)
+        img.resize((128, 128)).save(os.path.join("data/test_resize/", image), "JPEG")
+        img1 = Image.open("data/test_resize/" + image)
+        img_ndarray = numpy.asarray(img1, dtype='float32')
+        img_ndarray = numpy.reshape(img_ndarray, [128, 128, 3])
+        # print(img_ndarray.shape)
+        batch_x = img_ndarray
+        batch_xs.append(batch_x)
 
-        # print(batch_ys)
         batch_xs = numpy.asarray(batch_xs)
         print(batch_xs.shape)
+        pred_result_test = sess.run(pred_result, feed_dict={x: batch_xs, keep_prob: 1.})
+        print(image+"-->"+str(pred_result_test))
+    # print(batch_ys)
 
-        # Run optimization op (backprop)
-        pred_result_test=sess.run(pred_result, feed_dict={x: batch_xs,keep_prob: 1.})
-        print(pred_result_test)
+    # Run optimization op (backprop)
+
     print("Test Finished!")
     saver.save(sess,"./model/model.ckpt")
